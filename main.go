@@ -1,10 +1,16 @@
 package main
 
-import "GoLess2/todo"
+import (
+	"GoLess2/httpp"
+	"GoLess2/todo"
+)
 
 func main() {
-	ev := NewEventStore()
 	todoList := todo.NewList()
-	scanner := NewScanner(&todoList)
-	scanner.Start(ev)
+	httpHand := httpp.NewHTTPHandlers(todoList)
+	server := httpp.NewHTTPServer(httpHand)
+	err := server.StartServer()
+	if err != nil {
+		panic(err)
+	}
 }
