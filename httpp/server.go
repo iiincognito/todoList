@@ -16,7 +16,7 @@ func NewHTTPServer(httpHandlers *HTTPHandlers) *HTTPServer {
 	}
 }
 
-func (s *HTTPServer) StartServer() error {
+func (s *HTTPServer) StartServer(addr string) error {
 	router := mux.NewRouter()
 	router.Path("/tasks").Methods("POST").HandlerFunc(s.httpHandlers.HandleCreatedTask)
 	router.Path("/tasks/{title}").Methods("GET").HandlerFunc(s.httpHandlers.HandleGetTask)
@@ -24,11 +24,12 @@ func (s *HTTPServer) StartServer() error {
 	router.Path("/tasks").Methods("GET").Queries("completed", "false").HandlerFunc(s.httpHandlers.HandleGetAllUncompletedTask)
 	router.Path("/tasks/{title}").Methods("PATCH").HandlerFunc(s.httpHandlers.HandleCompleteTask)
 	router.Path("/tasks/{title}").Methods("DELETE").HandlerFunc(s.httpHandlers.HandleDeleteTask)
-	if err := http.ListenAndServe(":9091", router); err != nil {
+	if err := http.ListenAndServe(addr, router); err != nil {
 		if errors.Is(err, http.ErrServerClosed) {
 			return nil
 		}
 		return err
 	}
 	return nil
+
 }
